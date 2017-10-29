@@ -75,7 +75,7 @@ then((db)=>
   // }
   // );
   db.collection('Users').
-  find({ name: 'Mateusz' }).toArray().
+  find({ name: 'Mateusz ' }).toArray().
   then((documents )=>
   {
     console.log('TODOS');
