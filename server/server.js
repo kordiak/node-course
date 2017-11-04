@@ -53,7 +53,7 @@ app.get('/todos/:id',(req, res)=>
     {
       if(todo != null)
       {
-        res.send(todo);
+        res.send({todo});
       }
       else {
         res.status(404).send();
