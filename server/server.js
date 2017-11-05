@@ -39,11 +39,11 @@ app.delete('/todos/:id',(req,res)=>
     return res.status(400).send();
   }
 
-  Todo.findByIdAndRemove(id).then((document)=>
+  Todo.findByIdAndRemove(id).then((todo)=>
   {
-   if(document != null)
+   if(todo != null)
    {
-     res.status(200).send(document);
+     res.status(200).send({todo});
      return;
    }
 
@@ -53,24 +53,6 @@ app.delete('/todos/:id',(req,res)=>
     {
       res.status(404).send();
     });
-
-
-
-
-
-
-
-
-
-//get the id
-//validate the id
-  //not valid return 404
-//remove todo by id
-  //succes
-    //if no doc send 404
-    //if doc send back with 200
-  //error send 400 with empty boyd
-
 });
 
 app.get('/todos',(req,res)=>
@@ -91,11 +73,11 @@ app.get('/todos/:id',(req, res)=>
   var id = req.params.id;
   if(ObjectID.isValid(id))
   {
-    Todo.findById(id).then((document)=>
+    Todo.findById(id).then((todo)=>
     {
-      if(document != null)
+      if(todo != null)
       {
-        res.status(200).send({document});
+        res.status(200).send({todo});
       }
       else {
         res.status(404).send();
