@@ -31,6 +31,47 @@ app.post('/todos',(req,res)=>
 
   console.log(req.body);
 });
+app.delete('/todos/:id',(req,res)=>
+{
+  var id = req.params.id;
+  if(!ObjectID.isValid(id))
+  {
+    return res.status(400).send();
+  }
+
+  Todo.findByIdAndRemove(id).then((document)=>
+  {
+   if(document != null)
+   {
+     res.status(200).send(document);
+     return;
+   }
+
+   res.status(404).send();
+
+    }).catch((error)=>
+    {
+      res.status(404).send();
+    });
+
+
+
+
+
+
+
+
+
+//get the id
+//validate the id
+  //not valid return 404
+//remove todo by id
+  //succes
+    //if no doc send 404
+    //if doc send back with 200
+  //error send 400 with empty boyd
+
+});
 
 app.get('/todos',(req,res)=>
 {
@@ -50,11 +91,11 @@ app.get('/todos/:id',(req, res)=>
   var id = req.params.id;
   if(ObjectID.isValid(id))
   {
-    Todo.findById(id).then((todo)=>
+    Todo.findById(id).then((document)=>
     {
-      if(todo != null)
+      if(document != null)
       {
-        res.send({todo});
+        res.status(200).send({document});
       }
       else {
         res.status(404).send();
@@ -64,10 +105,13 @@ app.get('/todos/:id',(req, res)=>
       //if ok send back
       //if not send 404
       //400 back and empty body
-    return;
+
+  }
+  else {
+    res.status(400).send();
   }
 
-  res.status(400).send();
+
 });
 
 app.listen(port, ()=>
