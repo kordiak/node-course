@@ -8,7 +8,8 @@ const bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
-var {ObjectID} = require('mongodb')
+var {ObjectID} = require('mongodb');
+var {authenticate} = require('./middleware/authenticate');
 
 
 var app = express();
@@ -57,6 +58,26 @@ app.post('/users',(req,res)=>{
     });
 
 });
+
+
+
+app.get('/users/me', authenticate, (req,res)=> {
+
+  var token = req.header('x-auth');
+
+  User.findByToken(token).then((user)=>{
+    if(!user){
+      return Promise.reject();
+    }
+    res.send(user);
+  })
+  .catch((error)=> {
+        res.status(401).send();
+  })
+
+
+});
+
 app.delete('/todos/:id',(req,res)=>
 {
   var id = req.params.id;
