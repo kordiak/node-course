@@ -3,6 +3,7 @@ const validator = require('validator')
 const jwt = require('jsonwebtoken')
 var {ObjectID} = require('mongodb')
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 var UserSchema = new mongoose.Schema({
   email:{
@@ -70,6 +71,52 @@ UserSchema.statics.findByToken = function (token)
     'tokens.access':'auth'
   });
 }
+
+UserSchema.statics.findByCredentials = function (email,password){
+  var User = this;
+  return User.findOne({email}).then((user)=>{
+    if(!user){
+      return Promise.reject();
+    }
+
+    return new Promise((resolve, reject)=>
+    {
+      bcrypt.compare(password,user.password,(err,res)=>{
+        if(res){
+          resolve(user);
+        }
+        reject();
+      })
+    })
+
+  })
+};
+
+UserSchema.pre('save',function (next) {
+  var user = this;
+   if(user.isModified('password')){
+     var password = user.password;
+
+     bcrypt.genSalt(10,(err,salt)=>{
+       bcrypt.hash(password,salt, (err,hash)=>{
+          if(hash)
+          {
+            user.password = hash;
+            next();
+          }
+
+          next(new Error('Unable to create user'));
+       });
+     });
+
+   }
+   else {
+     next();
+   }
+});
+
+
+
 
 var User = mongoose.model('User',UserSchema);
 
